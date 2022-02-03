@@ -1,6 +1,6 @@
 import os
 import pygame
-from exceptions import *
+from data.exceptions import *
 
 
 def load_image(name, colorkey=None):
