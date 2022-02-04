@@ -14,7 +14,7 @@ class Fruit(sprite.Sprite):
     def __init__(self):
         super().__init__()
 
-        self.x = random.randint(0, WIDTH)
+        self.x = random.randint(20, WIDTH - 20)
         self.y = random.randint(HEIGHT, HEIGHT + 100)
 
         self.fruit = random.choice(fruit_types)
@@ -23,7 +23,7 @@ class Fruit(sprite.Sprite):
         self.rect = Rect(self.x, self.y, self.image.get_width(), self.image.get_height())
 
         self.throwing_force = -1000
-        self.x_velocity = random.randrange(-5, 6)
+        self.x_velocity = random.randrange(*(-3, 0) if self.x >= WIDTH / 2 else (0, 3))
 
     def update(self):
         x = self.rect.x
