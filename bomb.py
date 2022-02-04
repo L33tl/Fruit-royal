@@ -7,19 +7,15 @@ from data.exceptions import BadLoadImage
 from data.commands import load_image
 from settings import WIDTH, HEIGHT, Y_GRAVITY, FPS, SIZE
 
-fruit_types = ['a', 'b', 'c', 'l', 'r', 'w']
 
-
-class Fruit(sprite.Sprite):
+class Bomb(sprite.Sprite):
     def __init__(self):
         super().__init__()
         pygame.init()
         self.x = random.randint(20, WIDTH - 20)
         self.y = random.randint(HEIGHT, HEIGHT + 100)
 
-        self.fruit = random.choice(fruit_types)
-
-        self.image = self.load_fruit_image()
+        self.image = self.load_bomb_image()
         self.rect = Rect(self.x, self.y, self.image.get_width(), self.image.get_height())
 
         self.throwing_force = -800
@@ -40,9 +36,9 @@ class Fruit(sprite.Sprite):
     def draw(self, screen):
         screen.blit(self.image, self.rect.size)
 
-    def load_fruit_image(self):
-        path = 'res/sprites/fruits'
+    def load_bomb_image(self):
+        path = 'res/sprites/bombs'
         try:
-            return load_image(f'{path}/{self.fruit}/{self.fruit}0.png')
+            return load_image(f'{path}/bomb.png')
         except BadLoadImage as bli:
             print(bli)
