@@ -19,9 +19,9 @@ class Fruit(sprite.Sprite):
 
         self.fruit = random.choice(fruit_types)
 
-        self.image = self.load_fruit_image()
+        self.image = self.load_fruit_image(0)
         self.rect = Rect(self.x, self.y, self.image.get_width(), self.image.get_height())
-
+        self.mask = pygame.mask.from_surface(self.image)
         self.throwing_force = -800
         self.x_velocity = random.randrange(*(-3, 0) if self.x >= WIDTH / 2 else (0, 3))
 
@@ -37,12 +37,18 @@ class Fruit(sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
 
+        if self.rect.y > HEIGHT + self.rect.height:
+            self.kill()
+
     def draw(self, screen):
         screen.blit(self.image, self.rect.size)
 
-    def load_fruit_image(self):
+    def load_fruit_image(self, number):
         path = 'res/sprites/fruits'
         try:
-            return load_image(f'{path}/{self.fruit}/{self.fruit}0.png')
+            return load_image(f'{path}/{self.fruit}/{self.fruit}{number}.png')
         except BadLoadImage as bli:
             print(bli)
+
+    def cut(self):
+        self.image = load_image(1)
