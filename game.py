@@ -3,8 +3,9 @@ import threading
 import random
 
 import pygame
+from pygame import Rect
 from pygame.sprite import Group
-
+from data.commands import load_image
 from settings import *
 from fruit import Fruit
 from bomb import Bomb
@@ -22,12 +23,24 @@ class Game:
         running = True
         clock = pygame.time.Clock()
         wait_for = 0
+        is_cutting = False
+        pygame.mouse.set_visible(False)
+        mouse_sprite = pygame.sprite.Sprite()
+        mouse_sprite.image = load_image('res/images/dsa.png')
+        mouse_sprite.rect = mouse_sprite.image.get_rect()
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        is_cutting = True
+                if event.type == pygame.MOUSEBUTTONUP:
+                    if event.button == 1:
+                        is_cutting = False
             screen.fill((0, 0, 0))
-
+            if pygame.mouse.get_focused():
+                mouse_sprite.rect.x, mouse_sprite.rect.y = pygame.mouse.get_pos()
             if not self.fruit_spawn_timer.is_set():
                 threading.Timer(self.get_random_time(), self.spawn_fruits_group,
                                 [self.fruit_spawn_timer]).start()
@@ -56,3 +69,7 @@ class Game:
 
     def get_random_time(self):
         return random.randrange(2, 3)
+
+
+    def update(self):
+        pass
