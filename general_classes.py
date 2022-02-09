@@ -1,6 +1,7 @@
 import pygame
 from pygame import Rect
 from data.commands import load_image
+from settings import *
 
 
 class Blade(pygame.sprite.Sprite):
@@ -14,13 +15,12 @@ class Blade(pygame.sprite.Sprite):
         self.is_rotating = False
         self.angle = 0
 
-    def update(self, is_clicked):
-        self.is_rotating = is_clicked
-
     def draw(self, screen, mouse_pos):
         if self.is_rotating:
             self.image, self.rect = self.rot_center(self.image, self.rect, 1)
-        screen.blit(self.image, (mouse_pos[0], mouse_pos[1]))
+        screen.blit(self.image, (
+            min(WIDTH - self.image.get_width(), mouse_pos[0]),
+            min(HEIGHT - self.image.get_height(), mouse_pos[1])))
 
     def rot_center(self, image, rect, angle):
         rot_image = pygame.transform.rotate(image, angle)
