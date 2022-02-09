@@ -8,7 +8,7 @@ from pygame.sprite import Group
 from data.commands import load_image
 from settings import *
 from fruit import Fruit
-from general_classes import Blade
+from general_classes import Blade, Cross
 from bomb import Bomb
 import random
 
@@ -20,21 +20,32 @@ class Game:
         self.fruit_spawn_timer = threading.Event()
 
         self.result = 0
-        self.added_points = 0
+        # self.added_points = 0
+        # self.added_points_tint = 180
         self.missed_fruits = 0
+        self.last_fruit = datetime.now()
 
         self.blade = Blade()
         self.last_fruit = datetime.now()
         self.mouse_moving = False
 
+        self.crosses = Group(Cross((60, 0)), Cross((120, 0)), Cross((180, 0)))
+
     def base_game(self, screen):
+        screen.fill((0, 0, 0))
+        back_image = pygame.transform.scale(load_image(f'res/images/game_background.png'), SIZE)
         running = True
         clock = pygame.time.Clock()
         last_fruit = datetime.now()
         pygame.mouse.set_visible(False)
         mouse_pos = (0, 0)
-        f1 = pygame.font.Font(None, 50)
+        f1 = pygame.font.Font(None, 100)
+
+        buttons = Group()
+
         while running:
+            screen.fill((0, 0, 0))
+            screen.blit(back_image, (0, 0))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
@@ -54,8 +65,8 @@ class Game:
                 else:
                     self.mouse_moving = False
 
-            if self.added_points:
-                self.render_added_points(screen)
+            # if self.added_points:
+            #     self.render_added_points(screen)
 
             score = f1.render(str(self.result), True, (180, 0, 0))
             self.blade.rect.x, self.blade.rect.y = mouse_pos
@@ -67,6 +78,9 @@ class Game:
             collision_res = self.check_collision()
             if collision_res is False:
                 break
+
+            self.crosses.update()
+            self.crosses.draw(screen)
             self.bomb_group.update()
             self.bomb_group.draw(screen)
             self.fruits_group.update()
@@ -90,8 +104,7 @@ class Game:
         self.fruit_spawn_timer.clear()
         return fruits
 
-    @staticmethod
-    def get_random_time():
+    def get_random_time(self):
         return random.randrange(2, 3)
 
     def check_collision(self):
@@ -112,20 +125,28 @@ class Game:
 
             if pygame.sprite.collide_mask(fruit, self.blade) and self.blade.is_cutting:
                 if (datetime.now() - self.last_fruit).seconds <= 0.5:
-                    self.added_points += 1
-                self.added_points += 1
+                    self.result += 1
+                self.result += 1
                 fruit.cut()
                 self.last_fruit = datetime.now()
                 answer += 1
             if fruit.rect.y > HEIGHT and fruit.was_above:
+                cross: Cross
+                for cross in self.crosses:
+                    if not cross.on_animation:
+                        cross.start_animation()
+                        break
+                else:
+                    return False
+
                 self.missed_fruits += 1
                 fruit.cut()
         return answer
 
-    def render_added_points(self, screen):
-        f2 = pygame.font.Font(None, 50)
-        score = f2.render(str(self.added_points), True, (0, 180, 0))
-        score.blit(score, (10, 0))
-
-        self.result += self.added_points
-        self.added_points = 0
+    # def render_added_points(self, screen):
+    #     f2 = pygame.font.Font(None, 50)
+    #     score = f2.render(f'+{str(self.added_points)}', True, (0, self.added_points_tint, 0))
+    #     score.blit(screen, (10, 0))
+    #
+    #     self.added_points_tint -= 10
+    #     self.result += self.added_points

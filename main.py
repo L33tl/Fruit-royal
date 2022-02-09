@@ -15,7 +15,7 @@ def setup_menu_screen(picture):
 
 
 def start_screen():
-    running, clock = setup_menu_screen("logo")
+    running, clock = setup_menu_screen("main_menu")
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -30,7 +30,7 @@ def start_screen():
 
 
 def finish_screen():
-    running, clock = setup_menu_screen('logo')
+    running, clock = setup_menu_screen('main_menu')
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -57,4 +57,7 @@ def main_game():
 if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode(SIZE)
-    start_screen()
+    try:
+        start_screen()
+    except pygame.error as e:
+        print(e)

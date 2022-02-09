@@ -13,5 +13,8 @@ def load_image(name, colorkey=None):
             colorkey = image.get_at((0, 0))
         image.set_colorkey(colorkey)
     else:
-        image = image.convert_alpha()
+        try:
+            image = image.convert_alpha()
+        except pygame.error as e:
+            print(e)
     return image

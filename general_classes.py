@@ -26,3 +26,40 @@ class Blade(pygame.sprite.Sprite):
         rot_image = pygame.transform.rotate(image, angle)
         rot_rect = rot_image.get_rect(center=rect.center)
         return rot_image, rot_rect
+
+
+class Cross(pygame.sprite.Sprite):
+    def __init__(self, cords):
+        super().__init__()
+        self.x, self.y = cords
+
+        self.images = [load_image(f'res/sprites/cross/x_0{i}.png') for i in range(1, 10)]
+        doubled_size = tuple(xy * 2 for xy in self.images[0].get_size())
+        self.images = [pygame.transform.scale(image, doubled_size) for image in self.images]
+
+        self.image = self.images[0]
+        self.rect = pygame.rect.Rect(self.x, self.y, *self.image.get_size())
+
+        self.on_animation = False
+        self.sprite = 0
+        self.last_sprite = 9
+
+    def animation(self):
+        if self.sprite < self.last_sprite - 1:
+            self.sprite += 0.2
+            self.image = self.images[round(self.sprite)]
+
+    def update(self):
+        if self.on_animation:
+            self.animation()
+
+    def draw(self, screen):
+        screen.blit(self.image, self.rect.size)
+
+    def start_animation(self):
+        self.on_animation = True
+
+
+class Button(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        pass
