@@ -21,13 +21,13 @@ class Game:
 
         self.result = 0
         self.added_points = 0
+        self.missed_fruits = 0
 
         self.blade = Blade()
         self.last_fruit = datetime.now()
         self.mouse_moving = False
 
     def base_game(self, screen):
-        screen.fill((0, 0, 0))
         running = True
         clock = pygame.time.Clock()
         last_fruit = datetime.now()
@@ -54,10 +54,8 @@ class Game:
                 else:
                     self.mouse_moving = False
 
-            screen.fill((0, 0, 0))
-
             if self.added_points:
-                self.render_added_points()
+                self.render_added_points(screen)
 
             score = f1.render(str(self.result), True, (180, 0, 0))
             self.blade.rect.x, self.blade.rect.y = mouse_pos

@@ -5,7 +5,7 @@ from game import Game
 
 
 def setup_menu_screen(picture):
-    screen.fill((0, 0, 0))
+    screen.fill((255, 255, 255))
     logo_image = load_image(f'res/images/{picture}.png')
     logo_image = pygame.transform.scale(logo_image, SIZE)
     screen.blit(logo_image, (0, 0))
