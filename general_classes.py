@@ -17,16 +17,35 @@ class Blade(pygame.sprite.Sprite):
 
     def draw(self, screen, mouse_pos):
         if self.is_rotating:
-            self.image, self.rect = self.rot_center(self.image, self.rect, 1)
+            self.image, self.rect = self.rot_center(self.image, 1, mouse_pos)
         screen.blit(self.image, (
             min(WIDTH - self.image.get_width(), mouse_pos[0]),
             min(HEIGHT - self.image.get_height(), mouse_pos[1])))
 
-    def rot_center(self, image, rect, angle):
-        rot_image = pygame.transform.rotate(image, angle)
-        rot_rect = rot_image.get_rect(center=rect.center)
-        return rot_image, rot_rect
+    def rot_center(self, image_ex, angle, coords):
+        rotated_image = pygame.transform.rotate(image_ex, angle)
+        new_rect = rotated_image.get_rect(center=image_ex.get_rect(center=coords).center)
+        return rotated_image, new_rect
 
+
+class Slice(pygame.sprite.Sprite):
+    def __init__(self, pos, dx, dy, fruit_type, side_type):
+        super().__init__()
+        self.image = load_image(f"res/sprites/fruits/{fruit_type}/{fruit_type}_slice{side_type}.png")
+        self.rect = self.image.get_rect()
+        self.velocity = [dx, dy]
+        self.rect.x, self.rect.y = pos
+        self.gravity = PART_GRAVITY
+
+    def update(self):
+        self.velocity[1] += self.gravity / FPS
+        self.rect.x += self.velocity[0]
+        self.rect.y += self.velocity[1]
+        if self.rect.y > HEIGHT:
+            self.kill()
+
+    def draw(self, screen):
+        screen.blit(self.image, (self.rect.x, self.rect.y))
 
 class Cross(pygame.sprite.Sprite):
     def __init__(self, cords):
