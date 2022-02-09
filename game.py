@@ -30,7 +30,7 @@ class Game:
         self.last_fruit = datetime.now()
         self.mouse_moving = False
 
-        self.crosses = Group(Cross((60, 0)), Cross((120, 0)), Cross((180, 0)))
+        self.crosses = Group(Cross((20, 50)), Cross((80, 50)), Cross((140, 50)))
 
     def base_game(self, screen):
         screen.fill((0, 0, 0))

@@ -11,6 +11,7 @@ def setup_menu_screen(picture):
     screen.blit(logo_image, (0, 0))
     running = True
     clock = pygame.time.Clock()
+    pygame.mouse.set_visible(True)
     return running, clock
 
 
