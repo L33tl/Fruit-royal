@@ -18,9 +18,13 @@ class Game:
         self.fruits_group = Group()
         self.bomb_group = Group()
         self.fruit_spawn_timer = threading.Event()
-        self.blade = Blade()
+
         self.result = 0
+        self.added_points = 0
+
+        self.blade = Blade()
         self.last_fruit = datetime.now()
+        self.mouse_moving = False
 
     def base_game(self, screen):
         screen.fill((0, 0, 0))
@@ -46,14 +50,22 @@ class Game:
                         self.blade.is_rotating = False
                 if event.type == pygame.MOUSEMOTION:
                     mouse_pos = event.pos
+                    self.mouse_moving = True
+                else:
+                    self.mouse_moving = False
+
             screen.fill((0, 0, 0))
-            score = f1.render(str(self.result), True,
-                              (180, 0, 0))
+
+            if self.added_points:
+                self.render_added_points()
+
+            score = f1.render(str(self.result), True, (180, 0, 0))
             self.blade.rect.x, self.blade.rect.y = mouse_pos
             if not self.fruit_spawn_timer.is_set():
                 threading.Timer(self.get_random_time(), self.spawn_fruits_group,
                                 [self.fruit_spawn_timer]).start()
                 self.fruit_spawn_timer.set()
+
             collision_res = self.check_collision()
             if collision_res is False:
                 break
@@ -80,21 +92,42 @@ class Game:
         self.fruit_spawn_timer.clear()
         return fruits
 
-    def get_random_time(self):
+    @staticmethod
+    def get_random_time():
         return random.randrange(2, 3)
 
     def check_collision(self):
         fruit: Fruit
+        bomb: Bomb
         answer = 0
+        acceleration_need_to_cut = 50
+
         for bomb in self.bomb_group:
+            if not self.mouse_moving and bomb.throwing_force <= acceleration_need_to_cut:
+                break
+
             if pygame.sprite.collide_mask(self.blade, bomb) and self.blade.is_cutting:
                 return False
         for fruit in self.fruits_group:
+            if not self.mouse_moving and fruit.throwing_force <= acceleration_need_to_cut:
+                return 0
+
             if pygame.sprite.collide_mask(fruit, self.blade) and self.blade.is_cutting:
                 if (datetime.now() - self.last_fruit).seconds <= 0.5:
-                    self.result += 1
-                self.result += 1
+                    self.added_points += 1
+                self.added_points += 1
                 fruit.cut()
                 self.last_fruit = datetime.now()
                 answer += 1
+            if fruit.rect.y > HEIGHT and fruit.was_above:
+                self.missed_fruits += 1
+                fruit.cut()
         return answer
+
+    def render_added_points(self, screen):
+        f2 = pygame.font.Font(None, 50)
+        score = f2.render(str(self.added_points), True, (0, 180, 0))
+        score.blit(score, (10, 0))
+
+        self.result += self.added_points
+        self.added_points = 0

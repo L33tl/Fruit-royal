@@ -52,5 +52,3 @@ class Fruit(sprite.Sprite):
 
     def cut(self):
         self.kill()
-
-
