@@ -21,9 +21,12 @@ class Game:
         self.blade = Blade()
         self.result = 0
         self.last_fruit = datetime.now()
+        self.missed_fruits = 0
+        self.mouse_moving = False
 
     def base_game(self, screen):
         screen.fill((0, 0, 0))
+        back_image = pygame.transform.scale(load_image(f'res/images/game_background.png'), SIZE)
         running = True
         clock = pygame.time.Clock()
         last_fruit = datetime.now()
@@ -46,7 +49,10 @@ class Game:
                         self.blade.is_rotating = False
                 if event.type == pygame.MOUSEMOTION:
                     mouse_pos = event.pos
-            screen.fill((0, 0, 0))
+                    self.mouse_moving = True
+                else:
+                    self.mouse_moving = False
+            screen.blit(back_image, (0, 0))
             score = f1.render(str(self.result), True,
                               (180, 0, 0))
             self.blade.rect.x, self.blade.rect.y = mouse_pos
@@ -85,11 +91,20 @@ class Game:
 
     def check_collision(self):
         fruit: Fruit
+        bomb: Bomb
         answer = 0
+        acceleration_need_to_cut = 50
+
         for bomb in self.bomb_group:
+            if not self.mouse_moving and bomb.throwing_force <= acceleration_need_to_cut:
+                break
+
             if pygame.sprite.collide_mask(self.blade, bomb) and self.blade.is_cutting:
                 return False
         for fruit in self.fruits_group:
+            if not self.mouse_moving and fruit.throwing_force <= acceleration_need_to_cut:
+                return 0
+
             if pygame.sprite.collide_mask(fruit, self.blade) and self.blade.is_cutting:
                 if (datetime.now() - self.last_fruit).seconds <= 0.5:
                     self.result += 1
@@ -97,4 +112,7 @@ class Game:
                 fruit.cut()
                 self.last_fruit = datetime.now()
                 answer += 1
+            if fruit.rect.y > HEIGHT and fruit.was_above:
+                self.missed_fruits += 1
+                fruit.cut()
         return answer

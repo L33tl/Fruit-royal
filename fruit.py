@@ -24,6 +24,7 @@ class Fruit(sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
         self.throwing_force = -800
         self.x_velocity = random.randrange(*(-3, 0) if self.x >= WIDTH / 2 else (0, 3))
+        self.was_above = False
 
     def update(self):
         x = self.rect.x
@@ -36,9 +37,8 @@ class Fruit(sprite.Sprite):
 
         self.rect.x = x
         self.rect.y = y
-
-        if self.rect.y > HEIGHT + self.rect.height:
-            self.kill()
+        if self.rect.y < HEIGHT - self.image.get_width():
+            self.was_above = True
 
     def draw(self, screen):
         screen.blit(self.image, self.rect.size)
