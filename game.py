@@ -20,6 +20,7 @@ class Game:
         self.fruit_spawn_timer = threading.Event()
         self.blade = Blade()
         self.result = 0
+        self.last_fruit = datetime.now()
 
     def base_game(self, screen):
         screen.fill((0, 0, 0))
@@ -52,9 +53,6 @@ class Game:
             collision_res = self.check_collision()
             if collision_res is False:
                 break
-            elif collision_res > 0 and (datetime.now() - last_fruit).seconds <= 1:
-                last_fruit = datetime.now()
-                self.result += 1
             self.bomb_group.update()
             self.bomb_group.draw(screen)
             self.fruits_group.update()
@@ -87,7 +85,10 @@ class Game:
             return False
         for fruit in self.fruits_group.sprites():
             if pygame.sprite.collide_mask(fruit, self.blade) and self.blade.is_cutting:
+                if (datetime.now() - self.last_fruit).seconds <= 0.5:
+                    self.result += 1
                 self.result += 1
                 fruit.kill()
+                self.last_fruit = datetime.now()
                 answer += 1
         return answer
