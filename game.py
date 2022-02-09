@@ -17,6 +17,7 @@ class Game:
     def __init__(self):
         self.fruits_group = Group()
         self.bomb_group = Group()
+        self.slices_group = Group()
         self.fruit_spawn_timer = threading.Event()
         self.blade = Blade()
         self.result = 0
@@ -67,6 +68,8 @@ class Game:
             self.bomb_group.draw(screen)
             self.fruits_group.update()
             self.fruits_group.draw(screen)
+            self.slices_group.update()
+            self.slices_group.draw(screen)
             self.blade.draw(screen, mouse_pos)
             screen.blit(score, (0, 0))
             clock.tick(FPS)
@@ -94,7 +97,6 @@ class Game:
         bomb: Bomb
         answer = 0
         acceleration_need_to_cut = 50
-
         for bomb in self.bomb_group:
             if not self.mouse_moving and bomb.throwing_force <= acceleration_need_to_cut:
                 break
@@ -109,10 +111,11 @@ class Game:
                 if (datetime.now() - self.last_fruit).seconds <= 0.5:
                     self.result += 1
                 self.result += 1
-                fruit.cut()
+                first, second = fruit.cut()
+                self.slices_group.add(first, second)
                 self.last_fruit = datetime.now()
                 answer += 1
             if fruit.rect.y > HEIGHT and fruit.was_above:
                 self.missed_fruits += 1
-                fruit.cut()
+                fruit.kill()
         return answer

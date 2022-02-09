@@ -2,7 +2,7 @@ import random
 
 import pygame
 from pygame import sprite, Rect
-
+from general_classes import Slice
 from data.exceptions import BadLoadImage
 from data.commands import load_image
 from settings import WIDTH, HEIGHT, Y_GRAVITY, FPS, SIZE
@@ -52,5 +52,7 @@ class Fruit(sprite.Sprite):
 
     def cut(self):
         self.kill()
-
-
+        first_coords = (self.rect.x + 5, self.rect.y - random.choice(range(1, 3)))
+        second_coords = (self.rect.x - 5, self.rect.y - random.choice(range(1, 3)))
+        return Slice(first_coords, random.choice(range(1, 3)), random.choice(range(1, 3)), self.fruit, 1), Slice(
+                     second_coords, random.choice(range(-3, -1)), random.choice(range(1, 3)), self.fruit, 2)
