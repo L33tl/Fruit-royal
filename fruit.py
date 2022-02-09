@@ -51,4 +51,6 @@ class Fruit(sprite.Sprite):
             print(bli)
 
     def cut(self):
-        self.image = load_image(1)
+        self.kill()
+
+
