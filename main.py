@@ -4,12 +4,18 @@ from data.commands import *
 from game import Game
 
 
-def start_screen():
+def setup_menu_screen():
     screen.fill((0, 0, 0))
     logo_image = load_image('res/images/logo.png')
+    logo_image = pygame.transform.scale(logo_image, SIZE)
     screen.blit(logo_image, (0, 0))
     running = True
     clock = pygame.time.Clock()
+    return running, clock
+
+
+def start_screen():
+    running, clock = setup_menu_screen()
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -24,11 +30,7 @@ def start_screen():
 
 
 def finish_screen():
-    screen.fill((0, 0, 0))
-    logo_image = load_image('res/images/logo.png')
-    screen.blit(logo_image, (0, 0))
-    running = True
-    clock = pygame.time.Clock()
+    running, clock = setup_menu_screen()
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
