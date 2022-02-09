@@ -17,7 +17,7 @@ class Bomb(sprite.Sprite):
 
         self.image = self.load_bomb_image()
         self.rect = Rect(self.x, self.y, self.image.get_width(), self.image.get_height())
-
+        self.mask = pygame.mask.from_surface(self.image)
         self.throwing_force = -800
         self.x_velocity = random.randrange(*(-3, 0) if self.x >= WIDTH / 2 else (0, 3))
 

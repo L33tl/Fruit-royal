@@ -37,9 +37,13 @@ class Game:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
                         self.blade.is_cutting = True
+                    if event.button == 3:
+                        self.blade.is_rotating = True
                 if event.type == pygame.MOUSEBUTTONUP:
                     if event.button == 1:
                         self.blade.is_cutting = False
+                    if event.button == 3:
+                        self.blade.is_rotating = False
                 if event.type == pygame.MOUSEMOTION:
                     mouse_pos = event.pos
             screen.fill((0, 0, 0))
@@ -57,7 +61,7 @@ class Game:
             self.bomb_group.draw(screen)
             self.fruits_group.update()
             self.fruits_group.draw(screen)
-            screen.blit(self.blade.image, mouse_pos)
+            self.blade.draw(screen, mouse_pos)
             screen.blit(score, (0, 0))
             clock.tick(FPS)
             pygame.display.flip()
@@ -80,15 +84,17 @@ class Game:
         return random.randrange(2, 3)
 
     def check_collision(self):
+        fruit: Fruit
         answer = 0
-        if pygame.sprite.spritecollide(self.blade, self.bomb_group, False) and self.blade.is_cutting:
-            return False
-        for fruit in self.fruits_group.sprites():
+        for bomb in self.bomb_group:
+            if pygame.sprite.collide_mask(self.blade, bomb) and self.blade.is_cutting:
+                return False
+        for fruit in self.fruits_group:
             if pygame.sprite.collide_mask(fruit, self.blade) and self.blade.is_cutting:
                 if (datetime.now() - self.last_fruit).seconds <= 0.5:
                     self.result += 1
                 self.result += 1
-                fruit.kill()
+                fruit.cut()
                 self.last_fruit = datetime.now()
                 answer += 1
         return answer
