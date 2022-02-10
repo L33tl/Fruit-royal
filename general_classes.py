@@ -47,6 +47,7 @@ class Slice(pygame.sprite.Sprite):
     def draw(self, screen):
         screen.blit(self.image, (self.rect.x, self.rect.y))
 
+
 class Cross(pygame.sprite.Sprite):
     def __init__(self, cords):
         super().__init__()
@@ -57,7 +58,7 @@ class Cross(pygame.sprite.Sprite):
         self.images = [pygame.transform.scale(image, doubled_size) for image in self.images]
 
         self.image = self.images[0]
-        self.rect = pygame.rect.Rect(self.x, self.y, *self.image.get_size())
+        self.rect = Rect(self.x, self.y, *self.image.get_size())
 
         self.on_animation = False
         self.sprite = 0
@@ -80,5 +81,24 @@ class Cross(pygame.sprite.Sprite):
 
 
 class Button(pygame.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x, y, image, on_click):
+        super().__init__()
+        self.x = x
+        self.y = y
+        self.image = image
+
+        self.click = on_click
+
+        self.mask = pygame.mask.from_surface(self.image)
+        self.rect = Rect(self.x, self.y, *self.image.get_size())
+        print(self.rect)
+
+    def click(self):
         pass
+
+    def draw(self, screen):
+        screen.blit(self.image, self.rect.size)
+
+    def get_rect(self):
+        print(self.rect)
+        return self.rect

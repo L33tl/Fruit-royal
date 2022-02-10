@@ -1,9 +1,7 @@
 import threading
 
-import random
-from datetime import datetime, timedelta
+from datetime import datetime
 import pygame
-from pygame import Rect
 from pygame.sprite import Group
 from data.commands import load_image
 from settings import *
@@ -42,14 +40,12 @@ class Game:
         mouse_pos = (0, 0)
         f1 = pygame.font.Font(None, 100)
 
-        buttons = Group()
-
         while running:
             screen.fill((0, 0, 0))
             screen.blit(back_image, (0, 0))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    running = False
+                    pygame.quit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
                         self.blade.is_cutting = True
@@ -135,7 +131,6 @@ class Game:
                 self.last_fruit = datetime.now()
                 answer += 1
             if fruit.rect.y > HEIGHT and fruit.was_above:
-
 
                 cross: Cross
                 for cross in self.crosses:
