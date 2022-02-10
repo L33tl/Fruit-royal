@@ -109,9 +109,6 @@ class Game:
 
     def arcade_game(self, screen):
         self.game_type = 0
-        # бомбы - -10pts
-        # упавшее говно хер с ним
-        # таймер 60s
 
         screen.fill((0, 0, 0))
         back_image = pygame.transform.scale(load_image(f'res/images/game_background.png'), SIZE)
