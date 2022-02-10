@@ -139,7 +139,9 @@ class Game:
                     self.current_combo += 1
                 else:
                     self.current_combo = 1
-                self.result += 1
+                self.result += fruit.points
+                if fruit.points == 5:
+                    self.current_combo = 5
                 first, second = fruit.cut()
                 self.slices_group.add(first, second)
                 self.last_fruit = datetime.now()
