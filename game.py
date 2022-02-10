@@ -8,7 +8,7 @@ from pygame.sprite import Group
 from data.commands import load_image
 from settings import *
 from fruit import Fruit
-from general_classes import Blade, Cross
+from general_classes import Blade, Cross, Combo, Spot
 from bomb import Bomb
 import random
 
