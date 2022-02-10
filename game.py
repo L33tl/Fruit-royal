@@ -8,7 +8,7 @@ from pygame.sprite import Group
 from data.commands import load_image
 from settings import *
 from fruit import Fruit
-from general_classes import Blade, Cross, Combo, Spot
+from general_classes import Blade, Cross
 from bomb import Bomb
 import random
 
@@ -20,7 +20,10 @@ class Game:
         self.slices_group = Group()
         self.particle_group = Group()
         self.fruit_spawn_timer = threading.Event()
+
         self.result = 0
+        # self.added_points = 0
+        # self.added_points_tint = 180
         self.missed_fruits = 0
         self.last_fruit = datetime.now()
         self.current_combo = 0
