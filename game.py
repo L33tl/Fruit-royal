@@ -8,7 +8,7 @@ from pygame.sprite import Group
 from data.commands import load_image
 from settings import *
 from fruit import Fruit
-from general_classes import Blade, Cross
+from general_classes import Blade, Cross, Combo, Spot
 from bomb import Bomb
 import random
 
@@ -18,14 +18,12 @@ class Game:
         self.fruits_group = Group()
         self.bomb_group = Group()
         self.slices_group = Group()
+        self.particle_group = Group()
         self.fruit_spawn_timer = threading.Event()
-
         self.result = 0
-        # self.added_points = 0
-        # self.added_points_tint = 180
         self.missed_fruits = 0
         self.last_fruit = datetime.now()
-
+        self.current_combo = 0
         self.blade = Blade()
         self.last_fruit = datetime.now()
         self.mouse_moving = False
@@ -40,7 +38,8 @@ class Game:
         last_fruit = datetime.now()
         pygame.mouse.set_visible(False)
         mouse_pos = (0, 0)
-        f1 = pygame.font.Font(None, 100)
+        score_text = pygame.font.Font(f"res/fonts/main_font.ttf", 50)
+        combo = None
 
         buttons = Group()
 
@@ -69,7 +68,7 @@ class Game:
             # if self.added_points:
             #     self.render_added_points(screen)
 
-            score = f1.render(str(self.result), True, (180, 0, 0))
+            score = score_text.render(str(self.result), True, (180, 0, 0))
             self.blade.rect.x, self.blade.rect.y = mouse_pos
             if not self.fruit_spawn_timer.is_set():
                 threading.Timer(self.get_random_time(), self.spawn_fruits_group,
@@ -79,7 +78,13 @@ class Game:
             collision_res = self.check_collision()
             if collision_res is False:
                 break
-
+            if collision_res and self.current_combo > 1:
+                combo = Combo(self.current_combo)
+            if combo:
+                combo.update()
+                combo.draw(screen)
+            self.particle_group.update()
+            self.particle_group.draw(screen)
             self.crosses.update()
             self.crosses.draw(screen)
             self.bomb_group.update()
@@ -126,14 +131,18 @@ class Game:
                 return 0
 
             if pygame.sprite.collide_mask(fruit, self.blade) and self.blade.is_cutting:
-                if (datetime.now() - self.last_fruit).seconds <= 0.5:
+                if (datetime.now() - self.last_fruit).seconds <= 0.3:
                     self.result += 1
-
+                    self.current_combo += 1
+                else:
+                    self.current_combo = 1
                 self.result += 1
                 first, second = fruit.cut()
                 self.slices_group.add(first, second)
                 self.last_fruit = datetime.now()
                 answer += 1
+                spot = Spot(first.rect.x, first.rect.y, first.fruit_type)
+                self.particle_group.add(spot)
             if fruit.rect.y > HEIGHT and fruit.was_above:
 
 
