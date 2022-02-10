@@ -15,7 +15,7 @@ def load_image(name, colorkey=None) -> Surface:
         image.set_colorkey(colorkey)
     else:
         try:
-            # image = image.convert_alpha()
+            image = image.convert_alpha()
             pass
         except pygame.error as e:
             print(e)
