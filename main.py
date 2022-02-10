@@ -1,3 +1,5 @@
+import csv
+
 import pygame
 from pygame.sprite import Group, Sprite
 
@@ -39,16 +41,56 @@ def setup_menu_screen(picture, result, combo):
     logo = images[3]
     new_size = tuple(xy / 2 for xy in logo.get_size())
     logo = scale(logo, new_size)
+    f1 = pygame.font.Font(f"res/fonts/main_font.ttf", 25)
+
+    max_result = get_max_result()
+    if result:
+        max_result = max(result, get_max_result())
+    max_result = f1.render(f'Max score: {max_result}', True, (182, 16, 201))
+    screen.blit(max_result, (19 * WIDTH / 20 - max_result.get_width(), 16 * HEIGHT / 20))
 
     if result:
-        f1 = pygame.font.Font(f"res/fonts/main_font.ttf", 25)
+        write_result(result, combo)
+
         result = f1.render(f'Score: {result}', True, (136, 15, 82))
         screen.blit(result, (19 * WIDTH / 20 - result.get_width(), 15 * HEIGHT / 20))
+
         if combo > 1:
             combo = f1.render(f'The best combo: {combo}', True, (199, 125, 201))
-            screen.blit(combo, (19 * WIDTH / 20 - combo.get_width(), 18 * HEIGHT / 20))
+            screen.blit(combo, (19 * WIDTH / 20 - combo.get_width(), 17 * HEIGHT / 20))
 
     return running, clock, buttons_group, logo
+
+
+def get_max_result():
+    max_result = 0
+    try:
+        with open('res/scores.csv', 'r', encoding='utf-8') as csv_file:
+            try:
+                data = list(csv.reader(csv_file, delimiter=';'))[1:]
+                max_result = max(int(max(data, key=lambda x: int(x[1]))[1]), max_result)
+            except (IndexError, ValueError):
+                pass
+    except KeyError:
+        print('Bad score log')
+    return max_result
+
+
+def write_result(result, combo):
+    try:
+        with open('res/scores.csv', 'r', encoding='utf-8') as csv_file:
+            try:
+                data = list(csv.reader(csv_file, delimiter=';'))[1:]
+                idx = int(data[-1][0])
+            except IndexError:
+                idx = 0
+
+        with open('res/scores.csv', 'a', encoding='utf-8', newline='') as csv_file:
+            writer = csv.writer(csv_file, delimiter=';', quotechar='|',
+                                quoting=csv.QUOTE_MINIMAL)
+            writer.writerow([str(idx + 1), str(result), str(combo)])
+    except KeyError:
+        print('Bad score log')
 
 
 def destroy():
@@ -111,10 +153,13 @@ def arcade_game():
 
 def main_game(game_type):
     game = Game()
-    if game_type:
-        result, combo = game.base_game(screen)
-    else:
-        result, combo = game.arcade_game(screen)
+    try:
+        if game_type:
+            result, combo = game.base_game(screen)
+        else:
+            result, combo = game.arcade_game(screen)
+    except TypeError:
+        result, combo = None, 0
     start_screen(result, combo)
 
 

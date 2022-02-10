@@ -52,6 +52,9 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        running = False
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
                         self.blade.is_cutting = True
@@ -129,6 +132,9 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        running = False
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
                         self.blade.is_cutting = True
