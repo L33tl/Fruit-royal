@@ -129,7 +129,7 @@ class Game:
                 if (datetime.now() - self.last_fruit).seconds <= 0.5:
                     self.result += 1
 
-                self.result += 1
+                self.result += fruit.points
                 first, second = fruit.cut()
                 self.slices_group.add(first, second)
                 self.last_fruit = datetime.now()
