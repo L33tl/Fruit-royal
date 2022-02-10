@@ -8,7 +8,7 @@ from game import Game
 from pygame.transform import scale
 
 
-def setup_menu_screen(picture):
+def setup_menu_screen(picture, result, combo):
     screen.fill((255, 255, 255))
     logo_image = load_image(f'res/images/{picture}.png')
     logo_image = pygame.transform.scale(logo_image, SIZE)
@@ -17,32 +17,46 @@ def setup_menu_screen(picture):
     clock = pygame.time.Clock()
     pygame.mouse.set_visible(True)
 
-    btn_images = [load_image(f'res/images/{image}.png') for image in ['exit', 'classic', 'arcade']]
+    images = [load_image(f'res/images/{image}.png') for image in
+              ['exit', 'classic', 'arcade', 'logo']]
 
-    image = btn_images[0]
+    image = images[0]
     doubled_size = tuple(xy * 1.5 for xy in image.get_size())
     image = scale(image, doubled_size)
 
     button_exit = Button(10, HEIGHT - image.get_height(), image, destroy)
 
-    image = scale(btn_images[1], doubled_size)
+    image = scale(images[1], doubled_size)
     button_classic = Button(WIDTH / 3 - image.get_width() / 2, (HEIGHT - image.get_height()) / 2,
                             image, classic_game)
 
-    image = scale(btn_images[2], doubled_size)
+    image = scale(images[2], doubled_size)
     button_arcade = Button(2 * WIDTH / 3 - image.get_width() / 2, (HEIGHT - image.get_height()) / 2,
                            image, arcade_game)
 
     buttons_group = Group(button_exit, button_classic, button_arcade)
-    return running, clock, buttons_group
+
+    logo = images[3]
+    new_size = tuple(xy / 2 for xy in logo.get_size())
+    logo = scale(logo, new_size)
+
+    if result:
+        f1 = pygame.font.Font(f"res/fonts/main_font.ttf", 25)
+        result = f1.render(f'Score: {result}', True, (136, 15, 82))
+        screen.blit(result, (19 * WIDTH / 20 - result.get_width(), 15 * HEIGHT / 20))
+        if combo > 1:
+            combo = f1.render(f'The best combo: {combo}', True, (199, 125, 201))
+            screen.blit(combo, (19 * WIDTH / 20 - combo.get_width(), 18 * HEIGHT / 20))
+
+    return running, clock, buttons_group, logo
 
 
 def destroy():
     pygame.quit()
 
 
-def start_screen():
-    running, clock, buttons_group = setup_menu_screen("main_menu")
+def start_screen(result=None, combo=0):
+    running, clock, buttons_group, logo = setup_menu_screen("main_menu", result, combo)
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -54,8 +68,9 @@ def start_screen():
                     if button.get_rect().collidepoint(x, y):
                         button.click()
                         break
-
+        screen.blit(logo, ((WIDTH - logo.get_width()) / 2, HEIGHT / 20))
         buttons_group.draw(screen)
+
         pygame.display.flip()
         clock.tick(FPS)
 
@@ -97,10 +112,10 @@ def arcade_game():
 def main_game(game_type):
     game = Game()
     if game_type:
-        game.base_game(screen)
+        result, combo = game.base_game(screen)
     else:
-        pass
-    start_screen()
+        result, combo = game.arcade_game(screen)
+    start_screen(result, combo)
 
 
 if __name__ == '__main__':

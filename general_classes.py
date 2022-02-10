@@ -88,7 +88,6 @@ class Button(pygame.sprite.Sprite):
 
         self.mask = pygame.mask.from_surface(self.image)
         self.rect = Rect(self.x, self.y, *self.image.get_size())
-        print(self.rect)
 
     def click(self):
         pass
@@ -97,7 +96,6 @@ class Button(pygame.sprite.Sprite):
         screen.blit(self.image, self.rect.size)
 
     def get_rect(self):
-        print(self.rect)
         return self.rect
 
 

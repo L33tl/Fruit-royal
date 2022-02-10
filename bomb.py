@@ -22,6 +22,7 @@ class Bomb(sprite.Sprite):
         self.x_velocity = random.randrange(*(-3, 0) if self.x >= WIDTH / 2 else (0, 3))
 
         self.mask = pygame.mask.from_surface(self.image)
+        self.is_exploded = False
 
     def update(self):
         x = self.rect.x
@@ -44,3 +45,9 @@ class Bomb(sprite.Sprite):
             return load_image(f'{path}/bomb.png')
         except BadLoadImage as bli:
             print(bli)
+
+    def set_exploded(self):
+        self.is_exploded = True
+
+    def exploded(self):
+        return self.is_exploded

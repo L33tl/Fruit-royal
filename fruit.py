@@ -15,14 +15,14 @@ class Fruit(sprite.Sprite):
         super().__init__()
         pygame.init()
         self.x = random.randint(20, WIDTH - 20)
-        self.y = random.randint(HEIGHT, HEIGHT + 100)
+        self.y = random.randint(HEIGHT, HEIGHT + 200)
 
         self.fruit = random.choice(fruit_types)
 
         self.image = self.load_fruit_image(0)
         self.rect = Rect(self.x, self.y, self.image.get_width(), self.image.get_height())
         self.mask = pygame.mask.from_surface(self.image)
-        self.throwing_force = -800
+        self.throwing_force = -1000
         self.x_velocity = random.randrange(*(-3, 0) if self.x >= WIDTH / 2 else (0, 3))
         self.was_above = False
 
@@ -54,5 +54,6 @@ class Fruit(sprite.Sprite):
         self.kill()
         first_coords = (self.rect.x + 5, self.rect.y - random.choice(range(1, 3)))
         second_coords = (self.rect.x - 5, self.rect.y - random.choice(range(1, 3)))
-        return Slice(first_coords, random.choice(range(1, 3)), random.choice(range(1, 3)), self.fruit, 1), Slice(
-                     second_coords, random.choice(range(-3, -1)), random.choice(range(1, 3)), self.fruit, 2)
+        return Slice(first_coords, random.choice(range(1, 3)), random.choice(range(1, 3)),
+                     self.fruit, 1), Slice(
+            second_coords, random.choice(range(-3, -1)), random.choice(range(1, 3)), self.fruit, 2)
