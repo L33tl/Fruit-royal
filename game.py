@@ -20,7 +20,10 @@ class Game:
         self.slices_group = Group()
         self.particle_group = Group()
         self.fruit_spawn_timer = threading.Event()
+
         self.result = 0
+        # self.added_points = 0
+        # self.added_points_tint = 180
         self.missed_fruits = 0
         self.last_fruit = datetime.now()
         self.current_combo = 0
@@ -227,7 +230,9 @@ class Game:
                     self.current_combo += 1
                 else:
                     self.current_combo = 1
-                self.result += 1
+                self.result += fruit.points
+                if fruit.points == 5:
+                    self.current_combo = 5
                 first, second = fruit.cut()
                 self.slices_group.add(first, second)
                 self.last_fruit = datetime.now()
